@@ -35,10 +35,10 @@ public class HealthSystem : MonoBehaviour
 	//==============================================================
 	// Regenerate Health & Mana
 	//==============================================================
-	public bool Regenerate = true;
-	public float regen = 0.1f;
-	private float timeleft = 0.0f;	// Left time for current interval
-	public float regenUpdateInterval = 1f;
+	// public bool Regenerate = false; // Set to false to disable all auto-regeneration
+	// public float regen = 0.1f;
+	// private float timeleft = 0.0f;	// Left time for current interval
+	// public float regenUpdateInterval = 1f;
 
 	public bool GodMode;
 
@@ -51,12 +51,12 @@ public class HealthSystem : MonoBehaviour
 	}
 	
 	//==============================================================
-	// Awake
+	// Start
 	//==============================================================
   	void Start()
 	{
 		UpdateGraphics();
-		timeleft = regenUpdateInterval;
+		// timeleft = regenUpdateInterval;
 		Enemy.SetActive(true);
 		Player.SetActive(true);
 	}
@@ -66,13 +66,14 @@ public class HealthSystem : MonoBehaviour
 	//==============================================================
 	void Update ()
 	{
-		if (Regenerate)
-			Regen();
+		// if (Regenerate)
+		// 	Regen();
 	}
 
 	//==============================================================
 	// Regenerate Health & Mana
 	//==============================================================
+	/*
 	private void Regen()
 	{
 		timeleft -= Time.deltaTime;
@@ -96,6 +97,7 @@ public class HealthSystem : MonoBehaviour
 			timeleft = regenUpdateInterval;
 		}
 	}
+	*/
 
 	//==============================================================
 	// Getters to be implemented in other classes(demo mainly).
@@ -173,6 +175,9 @@ public class HealthSystem : MonoBehaviour
 			manaPoint = 0;
 
 		UpdateGraphics();
+
+		// Trigger enemy hurt sequence so we process death and popups for the enemy
+		StartCoroutine(EnemyHurts());
 	}
 
 	public void RestoreMana(float Mana)
@@ -225,7 +230,7 @@ public class HealthSystem : MonoBehaviour
 
     IEnumerator EnemyHurts()
     {
-        // Player gets hurt. Do stuff.. play anim, sound..
+        // Enemy gets hurt. Do stuff.. play anim, sound..
 
         PopupText.Instance.Popup("Ouch!", 1f, 1f); // Demo stuff!
 
@@ -246,16 +251,19 @@ public class HealthSystem : MonoBehaviour
 		// Player is dead. Do stuff.. play anim, sound..
 		PopupText.Instance.Popup("You have died!", 1f, 1f); // Demo stuff!
 		
-
-		yield return null;
-	}
+		// Wait for exactly 2 seconds so the user can read the popup
+		yield return new WaitForSeconds(2.0f);
+		
+		// Load Main Menu scene, assuming index 0 is your initial main menu scene
+		SceneManager.LoadScene(0);
+	}							
 
     //==============================================================
-    // Hero is dead
+    // Enemy is dead
     //==============================================================
     IEnumerator EnemyDied()
     {
-        // Player is dead. Do stuff.. play anim, sound..
+        // Enemy is dead. Do stuff.. play anim, sound..
         PopupText.Instance.Popup("Enemy is dead!", 1f, 1f); // Demo stuff!
 
 

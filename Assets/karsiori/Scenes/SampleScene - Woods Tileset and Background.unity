@@ -4607,6 +4607,7 @@ MonoBehaviour:
   dialogueText: {fileID: 1302798590}
   manager: {fileID: 739596124}
   healthSystem: {fileID: 1912936413}
+  enemyHealth: 100
   levelCounter: 0
 --- !u!4 &1573894394
 Transform:
