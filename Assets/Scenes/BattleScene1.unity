@@ -669,6 +669,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1088979070}
+  - {fileID: 1193283359}
+  - {fileID: 2021034980}
+  - {fileID: 1847970660}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &212172941
@@ -3255,13 +3258,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1193283358}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1767.6772, y: 599.456, z: -718.3344}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 287.5116, y: 383.43256, z: -1454.9851}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1723408667}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 182704012}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1274604171
 GameObject:
@@ -4576,6 +4579,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1573894394}
   - component: {fileID: 1573894393}
+  - component: {fileID: 1573894395}
   m_Layer: 0
   m_Name: d
   m_TagString: Untagged
@@ -4624,6 +4628,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1573894395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573894392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f197225364b7c14c9e4dfe3a2a40f6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaknessMultiplier: 2
+  resistanceMultiplier: 0.5
 --- !u!1 &1574348267
 GameObject:
   m_ObjectHideFlags: 0
@@ -5836,12 +5854,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1847970659}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1767.6772, y: 599.456, z: -718.3344}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 287.5116, y: 383.43256, z: -1454.9851}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 182704012}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1898614297 stripped
 MonoBehaviour:
@@ -5989,10 +6007,7 @@ MonoBehaviour:
   manaText: {fileID: 77465622}
   manaPoint: 100
   maxManaPoint: 100
-  Regenerate: 1
-  regen: 0.1
-  regenUpdateInterval: 1
-  GodMode: 0
+  GodMode: 1
 --- !u!1 &1992255316
 GameObject:
   m_ObjectHideFlags: 0
@@ -6002,6 +6017,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1992255317}
+  - component: {fileID: 1992255318}
   m_Layer: 5
   m_Name: Attack/Back Buttons
   m_TagString: Untagged
@@ -6033,6 +6049,20 @@ RectTransform:
   m_AnchoredPosition: {x: 900, y: -100}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1992255318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992255316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f197225364b7c14c9e4dfe3a2a40f6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaknessMultiplier: 2
+  resistanceMultiplier: 0.5
 --- !u!1 &2021034979
 GameObject:
   m_ObjectHideFlags: 0
@@ -6057,13 +6087,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2021034979}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.9095857, y: 0.31298333, z: -6.2153845}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1483.0752, y: -215.71045, z: -742.866}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2093787102}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 182704012}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2063669205
 GameObject:
@@ -6269,8 +6299,5 @@ SceneRoots:
   - {fileID: 1902462641}
   - {fileID: 377557631}
   - {fileID: 1573894394}
-  - {fileID: 2021034980}
   - {fileID: 182704012}
-  - {fileID: 1193283359}
-  - {fileID: 1847970660}
   - {fileID: 738197644}

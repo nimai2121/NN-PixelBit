@@ -56,7 +56,6 @@ public class HealthSystem : MonoBehaviour
   	void Start()
 	{
 		UpdateGraphics();
-		// timeleft = regenUpdateInterval;
 		Enemy.SetActive(true);
 		Player.SetActive(true);
 	}
@@ -64,7 +63,7 @@ public class HealthSystem : MonoBehaviour
 	//==============================================================
 	// Update
 	//==============================================================
-	void Update ()
+	void Update()
 	{
 		// if (Regenerate)
 		// 	Regen();
@@ -213,7 +212,7 @@ public class HealthSystem : MonoBehaviour
 	{
 		// Player gets hurt. Do stuff.. play anim, sound..
 
-		PopupText.Instance.Popup("Ouch!", 1f, 1f); // Demo stuff!
+		//PopupText.Instance.Popup("Ouch!", 1f, 1f); // Demo stuff!
 
 		if (hitPoint < 1) // Health is Zero!!
 		{
@@ -248,13 +247,24 @@ public class HealthSystem : MonoBehaviour
     //==============================================================
     IEnumerator PlayerDied()
 	{
-		// Player is dead. Do stuff.. play anim, sound..
-		PopupText.Instance.Popup("You have died!", 1f, 1f); // Demo stuff!
+		// Player is dead. Safely check if PopupText exists so it doesn't break the Coroutine!
+		if (PopupText.Instance != null)
+		{
+			PopupText.Instance.Popup("You have died!", 1f, 1f);
+		}
+
+        // Debug.Log("Loading Main Menu...");
+        // Bulletproof delay loop using unscaled time
+        float timer = 0f;
+		while (timer < 2.0f)
+		{
+			timer += Time.unscaledDeltaTime;
+			yield return null;
+		}
+
+		Debug.Log("Delay finished. Loading Main Menu...");
 		
-		// Wait for exactly 2 seconds so the user can read the popup
-		yield return new WaitForSeconds(2.0f);
-		
-		// Load Main Menu scene, assuming index 0 is your initial main menu scene
+		// Load Main Menu scene
 		SceneManager.LoadScene(0);
 	}							
 
@@ -263,12 +273,13 @@ public class HealthSystem : MonoBehaviour
     //==============================================================
     IEnumerator EnemyDied()
     {
-        // Enemy is dead. Do stuff.. play anim, sound..
-        PopupText.Instance.Popup("Enemy is dead!", 1f, 1f); // Demo stuff!
-
+        // Enemy is dead. Safely check if PopupText exists!
+		if (PopupText.Instance != null)
+		{
+        	PopupText.Instance.Popup("Enemy is dead!", 1f, 1f);
+		}
 
         yield return null;
     }
-
 
 }
