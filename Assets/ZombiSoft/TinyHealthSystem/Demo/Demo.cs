@@ -26,7 +26,7 @@ public class Demo : MonoBehaviour // make a bool condition for if the player is 
     public TMP_Text dialogueText;
     
     public InterfaceManager manager;
-
+    public WeaknessSystem weaknessSystem;
     public HealthSystem healthSystem;
     float currentHealth;
     float newHealth;
@@ -37,7 +37,21 @@ public class Demo : MonoBehaviour // make a bool condition for if the player is 
     private bool playerTurn = true; //going to be used in the future to signal the enemy CPU to attack when playerTurn = false.
     public int levelCounter;
 
-    private void Start()
+    public struct Attack
+    {
+        public float dmg;    
+        public Element element;       
+    }
+
+    public Dictionary<string, Attack> attackDamage = new Dictionary<string, Attack>()
+    {
+        { "Ragnarok", new Attack{dmg = 10f, element = Element.Fire }  },
+        { "Hurricane", new Attack{dmg = 15f, element = Element.Wind } },
+        { "Wrath of Zeus", new Attack{dmg = 20f, element = Element.Lightning } },
+        { "Glacier", new Attack{dmg = 25f, element = Element.Ice } }
+    };
+
+private void Start()
     {
         dialogueBox.SetActive(false);
         levelCounter = 0;
@@ -68,7 +82,7 @@ public class Demo : MonoBehaviour // make a bool condition for if the player is 
 
     }
 
-    
+    /*
     public void Attack1() {
         if (!playerTurn) return;
         switch (levelCounter)
@@ -134,8 +148,22 @@ public class Demo : MonoBehaviour // make a bool condition for if the player is 
                 break;
         }
         EndPlayerTurn();
-    }
+    }*/
 
+    public void AttackP(string attackName)
+    {
+        if (!playerTurn) return;
+
+        attackDamage.TryGetValue(attackName, out Attack attack);
+        float damage = weaknessSystem.CalculateDamage(attack.dmg, attack.element, levelCounter);
+
+        enemyHealth -= damage;
+        HealthSystem.Instance.UseMana(damage);
+        ShowBox("Player did " + damage + " damage to enemy!");
+        print("Player did " + damage + " damage to enemy!");
+        EndPlayerTurn();
+    }
+    //
     public void EnemyAttack() //test function made by nimai 11/8/25.  
     {
         switch (levelCounter) //

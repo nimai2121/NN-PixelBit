@@ -231,7 +231,7 @@ public class HealthSystem : MonoBehaviour
     {
         // Enemy gets hurt. Do stuff.. play anim, sound..
 
-        PopupText.Instance.Popup("Ouch!", 1f, 1f); // Demo stuff!
+        //PopupText.Instance.Popup("Ouch!", 1f, 1f); // Demo stuff!
 
         if (manaPoint < 1) // Health is Zero!!
         {
@@ -279,7 +279,19 @@ public class HealthSystem : MonoBehaviour
         	PopupText.Instance.Popup("Enemy is dead!", 1f, 1f);
 		}
 
-        yield return null;
+        float timer = 0f;
+        while (timer < 2.0f)
+        {
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        Debug.Log("Delay finished. Loading Level Map...");
+
+        // Load Level Map Scene
+        SceneManager.LoadScene(2);
+
+        
     }
 
 }
