@@ -16,6 +16,14 @@ public class Demo : MonoBehaviour // make a bool condition for if the player is 
     public GameObject guardButton; //two main menu buttons besides the atk button. 
     public GameObject itemButton; //should be disappearing once in attack menu to make way for attack buttons to spawn in. use gameObject.setActive(false) or sm shi like that ykyk. - nimai 10/11/25
 
+    public int healPotionLimit = 3;
+    public int attackUseLimit = 3;
+
+    public GameObject itemMenuPanel;
+    public GameObject itemBackButton;
+    public GameObject healItemButton;
+    public GameObject manaItemButton;
+
     public GameObject atkMenuButton;
     public GameObject atkBackButton;
     public GameObject atkButton; 
@@ -35,7 +43,11 @@ public class Demo : MonoBehaviour // make a bool condition for if the player is 
 
     private bool isGuarding = false;//
     private bool playerTurn = true; //going to be used in the future to signal the enemy CPU to attack when playerTurn = false.
+    private bool manaTargetMode = false;
     public int levelCounter;
+    private int healPotionsRemaining;
+
+    private Dictionary<string, int> attackUsesRemaining = new Dictionary<string, int>();
 
     public struct Attack
     {
@@ -56,12 +68,37 @@ private void Start()
         dialogueBox.SetActive(false);
         levelCounter = 0;
         enemyHealth = 100f; // Initialize enemy health
+        healPotionsRemaining = healPotionLimit;
+        attackUsesRemaining = new Dictionary<string, int>()
+        {
+            { "Ragnarok", attackUseLimit },
+            { "Hurricane", attackUseLimit },
+            { "Wrath of Zeus", attackUseLimit },
+            { "Glacier", attackUseLimit }
+        };
+        if (itemMenuPanel != null)
+        {
+            itemMenuPanel.SetActive(false);
+        }
         atkMenuButton.gameObject.SetActive(true);
         atkButton.gameObject.SetActive(false);
         atkButton2.gameObject.SetActive(false);
         atkButton3.gameObject.SetActive(false);
         atkButton4.gameObject.SetActive(false);
         atkBackButton.gameObject.SetActive(false);
+        if (itemBackButton != null)
+        {
+            itemBackButton.SetActive(false);
+        }
+        if (healItemButton != null)
+        {
+            healItemButton.SetActive(false);
+        }
+        if (manaItemButton != null)
+        {
+            manaItemButton.SetActive(false);
+        }
+        UpdateAttackButtonAvailability();
     }
     
 
@@ -74,12 +111,47 @@ private void Start()
         //print("doing 10 damage!"); 
 
         atkMenuButton.gameObject.SetActive(false);
-        atkButton.gameObject.SetActive(true);
-        atkButton2.gameObject.SetActive(true);
-        atkButton3.gameObject.SetActive(true);
-        atkButton4.gameObject.SetActive(true);
+        if (itemButton != null)
+        {
+            itemButton.SetActive(false);
+        }
+        manaTargetMode = false;
+        UpdateAttackButtonAvailability();
         atkBackButton.gameObject.SetActive(true);
+        if (itemMenuPanel != null)
+        {
+            itemMenuPanel.SetActive(false);
+        }
 
+    }
+
+    public void itemButtonClick()
+    {
+        if (!playerTurn) return; // Prevent action if not player's turn
+
+        atkMenuButton.gameObject.SetActive(false);
+        if (itemButton != null)
+        {
+            itemButton.SetActive(false);
+        }
+        if (itemMenuPanel != null)
+        {
+            itemMenuPanel.SetActive(true);
+        }
+        if (itemBackButton != null)
+        {
+            itemBackButton.SetActive(true);
+        }
+        if (healItemButton != null)
+        {
+            healItemButton.SetActive(healPotionsRemaining > 0);
+        }
+        if (manaItemButton != null)
+        {
+            manaItemButton.SetActive(true);
+        }
+        ShowBox("Choose an item.");
+        print("Item menu opened.");
     }
 
     /*
@@ -154,11 +226,38 @@ private void Start()
     {
         if (!playerTurn) return;
 
+        if (manaTargetMode)
+        {
+            manaTargetMode = false;
+            if (RestoreAttackUses(attackName, 2))
+            {
+                ShowBox(attackName + " regained 2 uses!");
+                print(attackName + " regained 2 uses!");
+            }
+            else
+            {
+                ShowBox(attackName + " cannot be restored.");
+                print(attackName + " cannot be restored.");
+            }
+
+            EndPlayerTurn();
+            return;
+        }
+
+        if (GetAttackUsesRemaining(attackName) <= 0)
+        {
+            ShowBox(attackName + " is out of uses.");
+            print(attackName + " is out of uses.");
+            UpdateAttackButtonAvailability();
+            return;
+        }
+
         attackDamage.TryGetValue(attackName, out Attack attack);
         float damage = weaknessSystem.CalculateDamage(attack.dmg, attack.element, levelCounter);
 
         enemyHealth -= damage;
         HealthSystem.Instance.UseMana(damage);
+        SpendAttackUse(attackName);
         ShowBox("Player did " + damage + " damage to enemy!");
         print("Player did " + damage + " damage to enemy!");
         EndPlayerTurn();
@@ -292,12 +391,224 @@ private void Start()
 
     public void BackButton()
     {
+        manaTargetMode = false;
         atkMenuButton.gameObject.SetActive(true);
-        atkButton.gameObject.SetActive(false);
-        atkButton2.gameObject.SetActive(false);
-        atkButton3.gameObject.SetActive(false);
-        atkButton4.gameObject.SetActive(false);
+        if (itemButton != null)
+        {
+            itemButton.SetActive(true);
+        }
+        UpdateAttackButtonAvailability();
         atkBackButton.gameObject.SetActive(false);
+        if (itemMenuPanel != null)
+        {
+            itemMenuPanel.SetActive(false);
+        }
+        if (itemBackButton != null)
+        {
+            itemBackButton.SetActive(false);
+        }
+        if (healItemButton != null)
+        {
+            healItemButton.SetActive(false);
+        }
+        if (manaItemButton != null)
+        {
+            manaItemButton.SetActive(false);
+        }
+    }
+
+    public void ItemBackButton()
+    {
+        if (!playerTurn) return;
+
+        manaTargetMode = false;
+
+        if (itemMenuPanel != null)
+        {
+            itemMenuPanel.SetActive(false);
+        }
+        if (itemBackButton != null)
+        {
+            itemBackButton.SetActive(false);
+        }
+        if (healItemButton != null)
+        {
+            healItemButton.SetActive(false);
+        }
+        if (manaItemButton != null)
+        {
+            manaItemButton.SetActive(false);
+        }
+        if (itemButton != null)
+        {
+            itemButton.SetActive(true);
+        }
+        atkMenuButton.gameObject.SetActive(true);
+        ShowBox("Main menu.");
+    }
+
+    public void UseHealItem()
+    {
+        if (!playerTurn) return;
+
+        if (healPotionsRemaining <= 0)
+        {
+            ShowBox("No healing potions left.");
+            print("No healing potions left.");
+            ItemBackButton();
+            return;
+        }
+
+        healPotionsRemaining--;
+        if (itemMenuPanel != null)
+        {
+            itemMenuPanel.SetActive(false);
+        }
+        if (itemBackButton != null)
+        {
+            itemBackButton.SetActive(false);
+        }
+        if (healItemButton != null)
+        {
+            healItemButton.SetActive(false);
+        }
+        if (manaItemButton != null)
+        {
+            manaItemButton.SetActive(false);
+        }
+        UpdateItemButtonAvailability();
+        HealthSystem.Instance.HealDamage(20f);
+        ShowBox("Used a healing item for 20 HP! " + healPotionsRemaining + " heal potions left.");
+        EndPlayerTurn();
+    }
+
+    public void UseManaItem()
+    {
+        if (!playerTurn) return;
+
+        if (!CanRestoreAnyAttack())
+        {
+            ShowBox("No attack can be restored.");
+            print("No attack can be restored.");
+            ItemBackButton();
+            return;
+        }
+
+        if (itemMenuPanel != null)
+        {
+            itemMenuPanel.SetActive(false);
+        }
+        if (itemBackButton != null)
+        {
+            itemBackButton.SetActive(false);
+        }
+        if (healItemButton != null)
+        {
+            healItemButton.SetActive(false);
+        }
+        if (manaItemButton != null)
+        {
+            manaItemButton.SetActive(false);
+        }
+
+        manaTargetMode = true;
+        UpdateAttackButtonAvailability();
+
+        atkMenuButton.gameObject.SetActive(false);
+        if (itemButton != null)
+        {
+            itemButton.SetActive(false);
+        }
+
+        ShowBox("Choose an attack to restore 2 uses.");
+        print("Mana item opened attack restore mode.");
+    }
+
+    private void UpdateItemButtonAvailability()
+    {
+        if (healItemButton != null)
+        {
+            healItemButton.SetActive(healPotionsRemaining > 0);
+        }
+        if (manaItemButton != null)
+        {
+            manaItemButton.SetActive(true);
+        }
+    }
+
+    private void UpdateAttackButtonAvailability()
+    {
+        SetAttackButtonActive(atkButton, "Ragnarok");
+        SetAttackButtonActive(atkButton2, "Hurricane");
+        SetAttackButtonActive(atkButton3, "Wrath of Zeus");
+        SetAttackButtonActive(atkButton4, "Glacier");
+    }
+
+    private void SetAttackButtonActive(GameObject buttonObject, string attackName)
+    {
+        if (buttonObject == null)
+        {
+            return;
+        }
+
+        buttonObject.SetActive(GetAttackUsesRemaining(attackName) > 0);
+    }
+
+    private int GetAttackUsesRemaining(string attackName)
+    {
+        if (attackUsesRemaining.TryGetValue(attackName, out int usesRemaining))
+        {
+            return usesRemaining;
+        }
+
+        return 0;
+    }
+
+    private void SpendAttackUse(string attackName)
+    {
+        if (!attackUsesRemaining.ContainsKey(attackName))
+        {
+            return;
+        }
+
+        attackUsesRemaining[attackName] = Mathf.Max(0, attackUsesRemaining[attackName] - 1);
+        UpdateAttackButtonAvailability();
+    }
+
+    private bool RestoreAttackUses(string attackName, int amount)
+    {
+        if (!attackUsesRemaining.TryGetValue(attackName, out int currentUses))
+        {
+            return false;
+        }
+
+        if (currentUses <= 0)
+        {
+            return false;
+        }
+
+        int restoredUses = Mathf.Min(attackUseLimit, currentUses + amount);
+        if (restoredUses == currentUses)
+        {
+            return false;
+        }
+
+        attackUsesRemaining[attackName] = restoredUses;
+        UpdateAttackButtonAvailability();
+        return true;
+    }
+
+    private bool CanRestoreAnyAttack()
+    {
+        foreach (KeyValuePair<string, int> attackEntry in attackUsesRemaining)
+        {
+            if (attackEntry.Value > 0 && attackEntry.Value < attackUseLimit)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void ShowBox(string dialogue)
